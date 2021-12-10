@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Api\Log\LogController;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\LoginRequest;
 use App\Exceptions\ApiAuthException;
 use App\Http\Resources\UserResource;
+use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\Request;
 
 /**

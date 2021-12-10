@@ -119,6 +119,12 @@ return [
             'path' => storage_path('logs/api-auth-exceptions.log'),
             'level' => 'debug',
         ],
+        
+        'api_operations_exceptions' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/api_operations_exceptions.log'),
+            'level' => 'debug',
+        ],
 
         'api_database_exceptions' => [
             'driver' => 'daily',

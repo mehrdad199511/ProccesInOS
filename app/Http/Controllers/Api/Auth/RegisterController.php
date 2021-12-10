@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api\Auth;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\RegisterRequest;
+use App\Http\Requests\Auth\RegisterRequest;
 use Illuminate\Support\Facades\Hash;
 use App\Exceptions\ApiAuthException;
 use Illuminate\Http\Response;
@@ -54,7 +54,7 @@ class RegisterController extends Controller
         LogController $logController
     ) {
         $this->_requestData = $request->all();
-        
+
         // Hashing user password
         $this->_requestData['password'] = Hash::make($this->_requestData['password']);
 
