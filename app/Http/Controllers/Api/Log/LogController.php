@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\v1\Log;
+namespace App\Http\Controllers\Api\Log;
 
 use App\Http\Controllers\Controller;
 use App\Repositories\LogRepository;
@@ -12,9 +12,7 @@ use App\Repositories\LogRepository;
  */
 class LogController extends Controller
 {
-    /**
-     * Logger
-     *
+    /**use App\Http\Controllers\Api\Log\LogController;
      * @param $request
      * @param array $logMetaData
      * @return void
