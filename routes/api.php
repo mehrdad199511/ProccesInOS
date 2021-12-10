@@ -27,13 +27,14 @@ Route::namespace('App\Http\Controllers\Api\Auth')
         function() {
 
             Route::post('/register', 'RegisterController@register');
+            Route::post('/login', 'LoginController@login');
         }
     );
     
 
 
 
-    
+
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();

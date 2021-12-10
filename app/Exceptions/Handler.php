@@ -4,6 +4,7 @@ namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
+use ErrorException;
 
 class Handler extends ExceptionHandler
 {
@@ -35,7 +36,12 @@ class Handler extends ExceptionHandler
     public function register()
     {
         $this->reportable(function (Throwable $e) {
-            //
+
+            if($e instanceof ErrorException) {
+                return response()->json([
+                    'message' => 'There is a Problem . Please report the admin.'
+                ], 500);
+            }
         });
     }
 }
