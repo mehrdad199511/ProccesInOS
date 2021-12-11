@@ -11,7 +11,13 @@ use Illuminate\Support\Env;
 
 
 class CreateDirectoryController extends Controller
-{             
+{         
+    /**
+     * constant value for parent directory
+     * 
+     */
+    private const PARENT_DIRECTORY = '/opt/myprogram';
+    
 
     /**
      * store username
@@ -41,7 +47,6 @@ class CreateDirectoryController extends Controller
 
         $this->_username = auth()->user()->name;
         $this->_customDirectory = $request->title;
-        $secureDirecrotyTitle =  escapeshellcmd($this->_customDirectory);
 
         $log = [
             'request' => json_encode($request->all()),
@@ -93,9 +98,9 @@ class CreateDirectoryController extends Controller
      */
     private function _createParentDirectory()
     {                
-        if(!file_exists(env('PARENT_DIRECTORY'))) {
+        if(!file_exists(self::PARENT_DIRECTORY)) {
 
-            $result = mkdir(env('PARENT_DIRECTORY'), 0777, true);
+            $result = mkdir(self::PARENT_DIRECTORY, 0777, true);
 
             if(!$result) {
 
@@ -119,9 +124,9 @@ class CreateDirectoryController extends Controller
      */
     private function _createUserDirectory()
     {                
-        if(!file_exists(env('PARENT_DIRECTORY') . '/' . $this->_username)) {
+        if(!file_exists(self::PARENT_DIRECTORY . '/' . $this->_username)) {
 
-            $result = mkdir(env('PARENT_DIRECTORY') . '/' . $this->_username, 0775, true);
+            $result = mkdir(self::PARENT_DIRECTORY . '/' . $this->_username, 0775, true);
 
             if(!$result) {
 
@@ -146,8 +151,8 @@ class CreateDirectoryController extends Controller
     private function _createCustomDirectory()
     {    
         $secureDirecrotyTitle =  escapeshellcmd($this->_customDirectory);
-        // dd((env('PARENT_DIRECTORY') . '/' . $this->_username . '/' . $secureDirecrotyTitle));
-        if(file_exists(env('PARENT_DIRECTORY') . '/' . $this->_username . '/' . $secureDirecrotyTitle)) {
+
+        if(file_exists(self::PARENT_DIRECTORY . '/' . $this->_username . '/' . $secureDirecrotyTitle)) {
 
             throw new ApiOperationsException(
                 'This imported directory has already been created.',
@@ -156,7 +161,7 @@ class CreateDirectoryController extends Controller
 
         }else {
 
-            $result = mkdir(env('PARENT_DIRECTORY') . '/' . $this->_username . '/' . $secureDirecrotyTitle, 0775, true);
+            $result = mkdir(self::PARENT_DIRECTORY . '/' . $this->_username . '/' . $secureDirecrotyTitle, 0775, true);
 
             if(!$result) {
 
