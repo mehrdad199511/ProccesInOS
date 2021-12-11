@@ -46,6 +46,7 @@ Route::namespace('App\Http\Controllers\Api\Operations')
         function() {
 
             Route::get('/getProcesses', 'GetProcessesController@getProcesses');
+            Route::post('/createDirectory', 'CreateDirectoryController@create');
         }
     );
     

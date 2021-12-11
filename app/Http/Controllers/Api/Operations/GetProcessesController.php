@@ -28,7 +28,7 @@ class GetProcessesController extends Controller
 
 
     /**
-     * Store authenticated user
+     * Store command exeute result code 
      *
      * @var int
      */
