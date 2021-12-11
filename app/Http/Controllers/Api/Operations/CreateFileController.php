@@ -4,13 +4,12 @@ namespace App\Http\Controllers\Api\Operations;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Operations\CreateDirectoryRequest;
+use App\Http\Requests\Operations\CreateFileRequest;
 use App\Http\Controllers\Api\Log\LogController;
 use App\Exceptions\ApiOperationsException;
 
-
-class CreateDirectoryController extends Controller
-{         
+class CreateFileController extends Controller
+{
     /**
      * constant value for parent directory
      * 
@@ -27,25 +26,34 @@ class CreateDirectoryController extends Controller
 
 
     /**
-     * Store user custom directory
+     * Store user custom file title
      *
      * @var string
      */
-    private $_customDirectory = '';
+    private $_customFileTitle = '';
+
+
+    /**
+     * Store user custom file extension 
+     *
+     * @var string
+     */
+    private $_customFileExtension = '';
 
 
 
     /**
-     * Execute user request for create directory
+     * Execute user request for create  custom file
      *
      * @param Request $request
      * @param LogController $logController
      * @return Response
      */
-    public function create(CreateDirectoryRequest $request, LogController $logController) {
+    public function create(CreateFileRequest $request, LogController $logController) {
 
         $this->_username = auth()->user()->name;
-        $this->_customDirectory = $request->title;
+        $this->_customFileTitle = $request->title;
+        $this->_customFileExtension = $request->extension;
 
         $log = [
             'request' => json_encode($request->all()),
@@ -53,13 +61,12 @@ class CreateDirectoryController extends Controller
 
         try {
 
-            $this->_createParentDirectory();
             $this->_createUserDirectory();
-            $this->_createCustomDirectory();
+            $this->_createCustomFile();
 
             $successResponse = [
                 'status' => true,
-                'message' => 'Your directory create successfully.',
+                'message' => 'Your file create successfully.',
             ];
             
             $log['response'] = json_encode($successResponse);
@@ -81,36 +88,6 @@ class CreateDirectoryController extends Controller
     
             $logController->logger($request, $log);
         }
-    }
-
-    /**
-     * Get parent directory name from .env
-     * file and create parent directory
-     * 
-     * Below changes is require for create parent directory :
-     * 
-     * chown -r www-data:www-data /opt
-     * chmod -R 777 /opt
-     *
-     * @return bool|Exception
-     * @throws ApiOperationsException
-     */
-    private function _createParentDirectory()
-    {                
-        if(!file_exists(self::PARENT_DIRECTORY)) {
-
-            $result = mkdir(self::PARENT_DIRECTORY, 0777, true);
-
-            if(!$result) {
-
-                throw new ApiOperationsException(
-                    'The operation is not execute and not create parent directory !',
-                    500
-                );
-            }
-        }
-
-        return true;
     }
 
 
@@ -141,31 +118,39 @@ class CreateDirectoryController extends Controller
 
 
     /**
-     * Check custom directory exist 
-     * and create custom directory
+     * Check custom file exist 
+     * and create custom file
      *
      * @return bool|Exception
      * @throws ApiOperationsException
      */
-    private function _createCustomDirectory()
+    private function _createCustomFile()
     {    
-        $secureDirecrotyTitle =  escapeshellcmd($this->_customDirectory);
+        $secureFileTitle =  escapeshellcmd($this->_customFileTitle);
+        $secureFileExtension =  escapeshellcmd($this->_customFileExtension);
 
-        if(file_exists(self::PARENT_DIRECTORY . '/' . $this->_username . '/' . $secureDirecrotyTitle)) {
+        if(
+            file_exists(
+                self::PARENT_DIRECTORY . '/' . $this->_username . '/' . $secureFileTitle . '.' . $secureFileExtension
+            )) 
+        {
 
             throw new ApiOperationsException(
-                'This imported directory has already been created.',
+                'This imported file has already been created.',
                 400
             );
 
         }else {
+            
+            $changeDirectoryCommand = 'cd ' . self::PARENT_DIRECTORY . '/' . $this->_username;
+            $createFileCommand = ' && touch ' . $secureFileTitle . '.' . $secureFileExtension;
 
-            $result = mkdir(self::PARENT_DIRECTORY . '/' . $this->_username . '/' . $secureDirecrotyTitle, 0775, true);
+            exec($changeDirectoryCommand . $createFileCommand, $output, $resultcode);
 
-            if(!$result) {
+            if($resultcode !== 0) {
 
                 throw new ApiOperationsException(
-                    'The operation is not execute and not create your directory !',
+                    'The operation is not execute and your file not create !',
                     500
                 );
             }
