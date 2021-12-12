@@ -49,6 +49,7 @@ Route::namespace('App\Http\Controllers\Api\Operations')
             Route::post('/createDirectory', 'CreateDirectoryController@create');
             Route::post('/createFile', 'CreateFileController@create');
             Route::get('/getDirectories', 'GetDirectoriesListController@getDirectories');
+            Route::get('/getFiles', 'GetFilesListController@getFiles');
         }
     );
     

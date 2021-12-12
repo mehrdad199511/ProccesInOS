@@ -7,9 +7,9 @@ use App\Http\Controllers\Controller;
 use App\Exceptions\ApiOperationsException;
 use App\Http\Controllers\Api\Log\LogController;
 
-class GetDirectoriesListController extends Controller
+class GetFilesListController extends Controller
 {
-    /**
+     /**
      * constant value for get processes
      * 
      */
@@ -17,7 +17,7 @@ class GetDirectoriesListController extends Controller
 
 
     /**
-     * Store final operation output
+     *  Store final operation output
      *
      * @var array
      */
@@ -31,23 +31,15 @@ class GetDirectoriesListController extends Controller
      */
     private $_username = '';
 
-    
-    /**
-     * Store command exeute result code 
-     *
-     * @var int
-     */
-    private $_resultCode = null;
-
 
     /**
-     * Get directories list from user directory 
+     * Get files list from user directory 
      *
      * @param Request $request
      * @param LogController $logController
      * @return Response
      */
-    public function getDirectories(Request $request, LogController $logController)
+    public function getFiles(Request $request, LogController $logController)
     {   
         $this->_username = auth()->user()->name;
 
@@ -58,17 +50,13 @@ class GetDirectoriesListController extends Controller
         ];
 
         try {
-            $command = 'cd ' . self::PARENT_DIRECTORY . $this->_username . ' && ls -d */';
-    
             $this->_checkParentDirectoryExist();
             $this->_checkUserDirectoryExist();
-
-            exec($command, $this->_output, $this->_resultCode);
-            $this->_checkCommandResult();
-    
+            $this->_checkUerDirectoryfilesList();
+            
             $successResponse = [
                 'status' => true,
-                'message' => 'Receive directories list from user directory successfully.',
+                'message' => 'Receive files list from user directory successfully.',
                 'result' => $this->_output,
             ];
             
@@ -140,35 +128,28 @@ class GetDirectoriesListController extends Controller
      * @return array|Exception
      * @throws ApiOperationsException
      */
-    private function _checkCommandResult()
+    private function _checkUerDirectoryfilesList()
     {                
-        if ($this->_resultCode == 2) {
+
+        $fileNames = [];
+        $contents = scandir(self::PARENT_DIRECTORY . $this->_username);
+
+        foreach($contents as $content) {
+
+            if(is_file(self::PARENT_DIRECTORY . $this->_username . DIRECTORY_SEPARATOR . $content)) {
+                array_push($fileNames, $content);
+            }
+        }       
+
+        if(empty($fileNames)) {
 
             throw new ApiOperationsException(
-                'There is no directory for this user directory!',
+                'There is no file for this user directory!',
                 422
             );
         }
 
-        if ($this->_resultCode !== 0) {
-
-            throw new ApiOperationsException(
-                ' The operation is not executable. The result code is : '.
-                $this->_resultCode 
-                .'. Please report the operator.',
-                422
-            );
-        }
-
-        $operationResult = [];
-
-        foreach ($this->_output as $value) {
-
-            $operationResult[] = str_replace("/", '', $value);
-        }
-
-        $this->_output = $operationResult;
-
+        $this->_output = $fileNames;
         return true;
     }
 }
