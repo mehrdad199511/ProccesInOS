@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Exceptions\ApiOperationsException;
 use App\Http\Controllers\Api\Log\LogController;
-use Dotenv\Result\Success;
 use stdClass;
 
 class GetProcessesController extends Controller
@@ -46,7 +45,9 @@ class GetProcessesController extends Controller
     {   
  
         $log = [
-            'request' => json_encode($request->all()),
+            'request' => json_encode(
+                'name : ' .  auth()->user()->name
+            ),
         ];
 
         try {
@@ -108,7 +109,8 @@ class GetProcessesController extends Controller
 
             $trimOutput    = trim($this->_output[$i]);
             $replaceOutput = preg_replace('/\s+/', " ", $trimOutput);
-            $explodeOutput = explode(" ",$replaceOutput);
+            $deleteSlash = str_replace("/", '', $replaceOutput);
+            $explodeOutput = explode(" ",$deleteSlash);
 
             $object->PID  = $explodeOutput[0];
             $object->TTY  = $explodeOutput[1];

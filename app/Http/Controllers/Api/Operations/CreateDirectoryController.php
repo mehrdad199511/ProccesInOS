@@ -84,8 +84,8 @@ class CreateDirectoryController extends Controller
     }
 
     /**
-     * Get parent directory name from .env
-     * file and create parent directory
+     * Get parent directory 
+     * and create parent directory
      * 
      * Below changes is require for create parent directory :
      * 

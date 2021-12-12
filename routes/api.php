@@ -35,7 +35,7 @@ Route::namespace('App\Http\Controllers\Api\Auth')
 
 /*
 |--------------------------------------------------------------------------
-| Processes Routes
+| Operations Routes
 |--------------------------------------------------------------------------
 */
 
@@ -48,6 +48,7 @@ Route::namespace('App\Http\Controllers\Api\Operations')
             Route::get('/getProcesses', 'GetProcessesController@getProcesses');
             Route::post('/createDirectory', 'CreateDirectoryController@create');
             Route::post('/createFile', 'CreateFileController@create');
+            Route::get('/getDirectories', 'GetDirectoriesListController@getDirectories');
         }
     );
     
